@@ -1,0 +1,14 @@
+{
+  "/api": {
+    "target": "http://0.0.0.0:3333",
+    "secure": false
+  },
+  "/assets": {
+    "target": "http://0.0.0.0:3333",
+    "secure": false
+  },
+  "/ionicons": {
+    "target": "http://0.0.0.0:3333",
+    "secure": false
+  }
+}

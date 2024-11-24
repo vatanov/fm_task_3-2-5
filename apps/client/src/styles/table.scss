@@ -1,0 +1,57 @@
+@mixin gf-table($darkTheme: false) {
+  --mat-table-background-color: var(--light-background);
+  --mat-table-background-color-even: rgba(var(--palette-foreground-base), 0.02);
+  --mat-table-background-color-hover: rgba(
+    var(--palette-foreground-base),
+    0.04
+  );
+
+  .mat-footer-row,
+  .mat-row {
+    .mat-cell,
+    .mat-footer-cell {
+      border-bottom: 0;
+    }
+  }
+
+  .mat-mdc-footer-row {
+    .mat-mdc-footer-cell {
+      border-top: 1px solid
+        rgba(
+          var(--palette-foreground-divider),
+          var(--palette-foreground-divider-alpha)
+        );
+    }
+  }
+
+  .mat-mdc-row {
+    &:nth-child(even) {
+      background-color: var(--mat-table-background-color-even);
+    }
+
+    &:hover {
+      background-color: var(--mat-table-background-color-hover) !important;
+    }
+  }
+
+  @if $darkTheme {
+    --mat-table-background-color: var(--dark-background);
+    --mat-table-background-color-even: rgba(
+      var(--palette-foreground-base-dark),
+      0.02
+    );
+    --mat-table-background-color-hover: rgba(
+      var(--palette-foreground-base-dark),
+      0.04
+    );
+
+    .mat-mdc-footer-row {
+      .mat-mdc-footer-cell {
+        border-top-color: rgba(
+          var(--palette-foreground-divider-dark),
+          var(--palette-foreground-divider-dark-alpha)
+        );
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<div class="container">
+  <h1
+    class="align-items-center d-none d-sm-flex h3 justify-content-center mb-3 text-center"
+  >
+    <span i18n>Granted Access</span>
+    @if (user?.subscription?.type === 'Basic') {
+      <gf-premium-indicator class="ml-1" />
+    }
+  </h1>
+  <gf-access-table
+    [accesses]="accesses"
+    [showActions]="hasPermissionToDeleteAccess"
+    [user]="user"
+    (accessDeleted)="onDeleteAccess($event)"
+  />
+  @if (hasPermissionToCreateAccess) {
+    <div class="fab-container">
+      <a
+        class="align-items-center d-flex justify-content-center"
+        color="primary"
+        mat-fab
+        [queryParams]="{ createDialog: true }"
+        [routerLink]="[]"
+      >
+        <ion-icon name="add-outline" size="large" />
+      </a>
+    </div>
+  }
+</div>

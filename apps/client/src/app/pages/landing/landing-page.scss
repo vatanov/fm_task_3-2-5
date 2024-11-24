@@ -1,0 +1,154 @@
+:host {
+  display: block;
+
+  .button-container {
+    .mat-mdc-outlined-button {
+      background-color: var(--light-background);
+    }
+  }
+
+  .customer-map-container {
+    aspect-ratio: 16 / 9;
+  }
+
+  .intro {
+    font-size: 4vw;
+    line-height: 1;
+
+    @media (max-width: 575.98px) {
+      font-size: 10vw;
+    }
+  }
+
+  .logo {
+    height: 3rem;
+    width: 7.5rem;
+
+    &.mask {
+      background-color: rgba(var(--dark-secondary-text));
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: contain;
+    }
+
+    &.logo-agplv3 {
+      mask-image: url('/assets/images/logo-AGPLv3.svg');
+    }
+
+    &.logo-alternative-to {
+      mask-image: url('/assets/images/logo-alternative-to.svg');
+    }
+
+    &.logo-awesome {
+      background-image: url('/assets/images/logo-awesome.png');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      filter: grayscale(1);
+    }
+
+    &.logo-dev-community {
+      mask-image: url('/assets/images/logo-dev-community.svg');
+    }
+
+    &.logo-hacker-news {
+      mask-image: url('/assets/images/logo-hacker-news.svg');
+    }
+
+    &.logo-openalternative {
+      mask-image: url('/assets/images/logo-openalternative.svg');
+    }
+
+    &.logo-privacy-tools {
+      mask-image: url('/assets/images/logo-privacy-tools.svg');
+    }
+
+    &.logo-product-hunt {
+      background-image: url('/assets/images/logo-product-hunt.png');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      filter: grayscale(1);
+    }
+
+    &.logo-reddit {
+      mask-image: url('/assets/images/logo-reddit.svg');
+      max-height: 1rem;
+    }
+
+    &.logo-sackgeld {
+      mask-image: url('/assets/images/logo-sackgeld.png');
+    }
+
+    &.logo-selfh-st {
+      mask-image: url('/assets/images/logo-selfh-st.svg');
+      max-height: 1.25rem;
+    }
+
+    &.logo-sourceforge {
+      mask-image: url('/assets/images/logo-sourceforge.svg');
+    }
+
+    &.logo-umbrel {
+      mask-image: url('/assets/images/logo-umbrel.svg');
+      max-height: 1.5rem;
+    }
+
+    &.logo-unraid {
+      mask-image: url('/assets/images/logo-unraid.svg');
+    }
+  }
+
+  .outro-inner-container {
+    aspect-ratio: 16 / 9;
+    max-height: 66vh;
+
+    div {
+      background-image: url('/assets/intro.jpg');
+      background-position: top left;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+  }
+
+  .video {
+    border: 1px solid rgba(var(--dark-dividers));
+
+    &:hover {
+      border-color: rgba(var(--palette-primary-500), 1);
+    }
+  }
+}
+
+:host-context(.theme-dark) {
+  .button-container {
+    .mat-mdc-outlined-button {
+      background-color: var(--dark-background);
+    }
+  }
+
+  .logo {
+    &.logo-agplv3,
+    &.logo-alternative-to,
+    &.logo-dev-community,
+    &.logo-hacker-news,
+    &.logo-openalternative,
+    &.logo-privacy-tools,
+    &.logo-reddit,
+    &.logo-sackgeld,
+    &.logo-selfh-st,
+    &.logo-sourceforge,
+    &.logo-umbrel,
+    &.logo-unraid {
+      background-color: rgba(var(--light-primary-text));
+    }
+  }
+
+  .outro-inner-container {
+    display: none;
+  }
+
+  .video {
+    border-color: rgba(var(--light-dividers));
+  }
+}
