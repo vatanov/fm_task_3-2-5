@@ -1,0 +1,58 @@
+name: Build & Push Docker Image to ECR
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: ghostfolio/ghostfolio
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Docker Images
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          ECR_URI="$ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}"
+          GIT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          # Always tag with commit SHA
+          docker build -t $ECR_URI:$GIT_SHA .
+
+          # Add branch-specific tags
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            docker tag $ECR_URI:$GIT_SHA $ECR_URI:latest
+          fi
+
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            docker tag $ECR_URI:$GIT_SHA $ECR_URI:develop
+          fi
+
+          # Push all tags
+          docker push $ECR_URI:$GIT_SHA
+
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            docker push $ECR_URI:latest
+          fi
+
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            docker push $ECR_URI:develop
+          fi
