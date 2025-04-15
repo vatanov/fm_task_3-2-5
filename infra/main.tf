@@ -115,7 +115,6 @@ resource "aws_eip" "one" {
 module "ghostfolio_web_srv" {
   source               = "./modules/ec2"
   network_interface_id = aws_network_interface.ghostfolio_nic.id
-  user_data            = file("${path.module}/ubuntu_init_script.sh")
 }
 
 # 10. Create DNS Record for EC2 Instance in Route53
