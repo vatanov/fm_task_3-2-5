@@ -1,0 +1,74 @@
+name: Terraform + Deploy to EC2
+
+on:
+  push:
+    branches: 
+      - main
+      - develop
+      - add-infara-and-deploy
+
+env:
+  AWS_REGION: us-east-1
+  TF_VAR_hosted_zone_id: ${{ secrets.TF_VAR_HOSTED_ZONE_ID }}
+
+jobs:
+  terraform:
+    name: Provision EC2 with Terraform
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./infra
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+      - name: Get EC2 Public IP
+        id: get_ip
+        run: |
+          echo "EC2_HOST=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
+
+  deploy:
+    name: Deploy Ghostfolio to EC2
+    runs-on: ubuntu-latest
+    needs: terraform
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
+          chmod 600 id_rsa
+
+      - name: Wait for EC2 to be ready
+        run: |
+          echo "Waiting for EC2 to accept SSH..."
+          for i in {1..15}; do
+            ssh -i id_rsa -o StrictHostKeyChecking=no -o ConnectTimeout=5 ubuntu@$EC2_HOST 'echo connected' && break
+            echo "Retrying in 10 seconds..."
+            sleep 10
+          done
+
+      - name: Upload and run deployment script
+        run: |
+          scp -i id_rsa -o StrictHostKeyChecking=no deploy-ghostfolio.sh ubuntu@$EC2_HOST:/home/ubuntu/
+          ssh -i id_rsa -o StrictHostKeyChecking=no ubuntu@$EC2_HOST 'bash /home/ubuntu/deploy-ghostfolio.sh'
