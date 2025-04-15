@@ -28,7 +28,8 @@ variable "network_interface_id" {
 }
 
 variable "user_data" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "tags" {
