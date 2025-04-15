@@ -124,4 +124,9 @@ resource "aws_route53_record" "ghostfolio_record" {
   type    = "A"
   ttl     = "300"
   records = [aws_eip.one.public_ip]
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [records] # optional: if IP can change and you don't want to recreate
+  }
 }
