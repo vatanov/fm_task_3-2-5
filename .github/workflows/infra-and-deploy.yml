@@ -43,15 +43,14 @@ jobs:
       - name: Get EC2 Public IP
         id: get_ip
         run: |
-          IP=$(terraform output -raw ec2_public_ip 2>/dev/null || echo "")
+          IP=$(terraform output -raw ec2_public_ip -no-color 2>/dev/null || echo "")
           if [ -z "$IP" ]; then
             echo "EC2 public IP not found. Exiting..."
             exit 1
           fi
-          echo "ip=$IP" >> "$GITHUB_OUTPUT"
+          echo "ip=${IP}" >> $GITHUB_OUTPUT
         env:
           TF_IN_AUTOMATION: true
-          TF_LOG: ""
 
   deploy:
     name: Deploy Ghostfolio to EC2
