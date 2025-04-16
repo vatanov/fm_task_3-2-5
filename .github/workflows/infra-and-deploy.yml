@@ -48,7 +48,8 @@ jobs:
             echo "EC2 public IP not found. Exiting..."
             exit 1
           fi
-          echo "EC2_HOST=$IP" >> $GITHUB_ENV
+          # Safely write to GITHUB_ENV
+          echo "EC2_HOST=${IP}" | tr -d '\r' >> "$GITHUB_ENV"
 
   deploy:
     name: Deploy Ghostfolio to EC2
