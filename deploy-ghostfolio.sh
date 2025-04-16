@@ -78,3 +78,45 @@ sudo docker compose -f docker/docker-compose.yml up -d
 sudo ln -s /etc/nginx/sites-available/ghostfolio /etc/nginx/sites-enabled/
 sudo rm /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl reload nginx
+
+
+#############################################################################################################
+#### Write a custom watcher script that runs docker compose up -d whenever the Compose file is modified. ####
+#############################################################################################################
+
+# Install inotify-tools
+sudo apt-get install inotify-tools -y
+
+# Create watcher script
+tee /home/ubuntu/ghostfolio/watch-compose.sh <<EOF
+/home/ubuntu/ghostfolio/watch-compose.sh
+#!/bin/bash
+COMPOSE_FILE="/home/ubuntu/ghostfolio/docker/docker-compose.yml"
+echo "Watching $COMPOSE_FILE for changes..."
+while inotifywait -e modify "$COMPOSE_FILE"; do
+  echo "Change detected, restarting containers..."
+  docker compose -f "$COMPOSE_FILE" up -d
+done
+EOF
+
+chmod +x /home/ubuntu/ghostfolio/watch-compose.sh
+
+# Create systemd service
+sudo tee /etc/systemd/system/compose-watcher.service > /dev/null <<EOF
+[Unit]
+Description=Watch docker-compose.yml and reload containers on change
+After=network.target docker.service
+
+[Service]
+ExecStart=/home/ubuntu/ghostfolio/watch-compose.sh
+WorkingDirectory=/home/ubuntu/ghostfolio
+User=ubuntu
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable compose-watcher
+sudo systemctl start compose-watcher
