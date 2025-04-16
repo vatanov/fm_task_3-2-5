@@ -49,6 +49,9 @@ jobs:
             exit 1
           fi
           echo "ip=$IP" >> "$GITHUB_OUTPUT"
+        env:
+          TF_IN_AUTOMATION: true
+          TF_LOG: ""
 
   deploy:
     name: Deploy Ghostfolio to EC2
