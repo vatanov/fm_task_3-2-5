@@ -124,15 +124,16 @@ module "ghostfolio_web_srv" {
 }
 
 # 10. Create DNS Record for EC2 Instance in Route53
+
 resource "aws_route53_record" "ghostfolio_record" {
-  zone_id = var.hosted_zone_id # Replaced with Route53 zone ID from terraform.tfvars
+  zone_id = var.hosted_zone_id
   name    = "ghostfolio.atanov.pp.ua"
   type    = "A"
   ttl     = "300"
-  records = [aws_eip.one.public_ip]
+  records = [var.ec2_public_ip]
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes        = [records] # optional: if IP can change and you don't want to recreate
+    ignore_changes        = [records]
   }
 }
