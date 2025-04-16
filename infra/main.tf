@@ -103,13 +103,19 @@ resource "aws_network_interface" "ghostfolio_nic" {
   security_groups = [aws_security_group.allow_web.id]
 }
 
-# 8. Assign an elastic IP to the network interface created in step 7
-resource "aws_eip" "one" {
-  domain                    = "vpc"
-  network_interface         = aws_network_interface.ghostfolio_nic.id
-  associate_with_private_ip = local.private_ip
-  depends_on                = [aws_internet_gateway.ghostfolio_gw, aws_network_interface.ghostfolio_nic, module.ghostfolio_web_srv]
+# 8. Assign an existing elastic IP to the network interface created in step 7
+resource "aws_eip_association" "ghostfolio" {
+  allocation_id        = "eipalloc-08db0f6e2886a95f5"  # Replace with your existing EIP's allocation ID
+  network_interface_id = aws_network_interface.ghostfolio_nic.id
+  depends_on           = [aws_internet_gateway.ghostfolio_gw, aws_network_interface.ghostfolio_nic, module.ghostfolio_web_srv]
 }
+
+# resource "aws_eip" "one" {
+#   domain                    = "vpc"
+#   network_interface         = aws_network_interface.ghostfolio_nic.id
+#   associate_with_private_ip = local.private_ip
+#   depends_on                = [aws_internet_gateway.ghostfolio_gw, aws_network_interface.ghostfolio_nic, module.ghostfolio_web_srv]
+# }
 
 # 9. Create Linux server, install components and run ghostfolio webapp
 module "ghostfolio_web_srv" {
