@@ -89,7 +89,6 @@ sudo apt-get install inotify-tools -y
 
 # Create watcher script
 tee /home/ubuntu/ghostfolio/watch-compose.sh <<EOF
-/home/ubuntu/ghostfolio/watch-compose.sh
 #!/bin/bash
 COMPOSE_FILE="/home/ubuntu/ghostfolio/docker/docker-compose.yml"
 echo "Watching $COMPOSE_FILE for changes..."
