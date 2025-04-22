@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - add-infara-and-deploy
+      - task_3-2-6_implementation
 
 env:
   AWS_REGION: us-east-1
@@ -40,6 +41,12 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+
+      - name: Upload Terraform state
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-state
+          path: terraform.tfstate
 
   deploy:
     name: Deploy Ghostfolio to EC2
