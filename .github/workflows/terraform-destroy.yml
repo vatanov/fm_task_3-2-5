@@ -34,6 +34,9 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Copy tfstate file into Terraform expected path
+        run: cp infra/terraform.tfstate terraform.tfstate
+
       - name: Terraform Init
         run: terraform init
 
