@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: terraform-state
-          path: terraform.tfstate
+          path: infra/terraform.tfstate
 
   deploy:
     name: Deploy Ghostfolio to EC2
