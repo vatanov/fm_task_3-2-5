@@ -49,7 +49,7 @@ jobs:
           git checkout -b tf-state
           mkdir -p infra
           cp terraform.tfstate infra/
-          git add infra/terraform.tfstate
+          git add -f infra/terraform.tfstate
           git commit -m "Save Terraform state"
           git push -f origin tf-state
     
