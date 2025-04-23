@@ -140,4 +140,7 @@ EOF
 
 chmod +x /home/ubuntu/ghostfolio/backup_db.sh
 
+sudo crontab -u ubuntu -l 2>/dev/null | grep -Fq "/home/ubuntu/ghostfolio/backup_db.sh" || \
+( sudo crontab -u ubuntu -l 2>/dev/null; echo "5 * * * * /home/ubuntu/ghostfolio/backup_db.sh" ) | sudo crontab -u ubuntu -
+
 /home/ubuntu/ghostfolio/backup_db.sh
