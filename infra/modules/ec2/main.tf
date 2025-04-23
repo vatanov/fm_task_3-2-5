@@ -9,9 +9,9 @@ resource "aws_instance" "this" {
     network_interface_id = var.network_interface_id
   }
 
+  iam_instance_profile = var.iam_instance_profile
+  
   user_data = var.user_data
 
   tags = var.tags
-
-  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 }
