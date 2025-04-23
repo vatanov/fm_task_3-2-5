@@ -124,8 +124,20 @@ sudo systemctl start compose-watcher
 ### Create a script to back up the database from the local host and upload it to S3 ###
 #######################################################################################
 
-tee /home/ubuntu/ghostfolio/test.txt <<EOF
-Hello from EC2!
+tee /home/ubuntu/ghostfolio/backup_db.sh <<EOF
+#!/bin/bash
+
+# Filename with timestamp
+TIMESTAMP=$(date +\\%F_\\%H-\\%M)
+FILENAME="db_backup_$TIMESTAMP.sql"
+# Dump the DB
+docker exec gf-postgres pg_dump -U user ghostfolio-db > /tmp/$FILENAME
+# Upload to S3
+aws s3 cp /tmp/$FILENAME s3://ghostfolio-db-backup/$FILENAME
+# Clean up
+rm /tmp/$FILENAME
 EOF
 
-aws s3 cp /home/ubuntu/ghostfolio/test.txt s3://ghostfolio-db-backup/
+chmod +x /home/ubuntu/ghostfolio/backup_db.sh
+
+/home/ubuntu/ghostfolio/backup_db.sh
