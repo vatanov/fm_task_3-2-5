@@ -131,7 +131,7 @@ tee /home/ubuntu/ghostfolio/backup_db.sh <<EOF
 TIMESTAMP=\$(date +\%F_\%H-\%M)
 FILENAME="db_backup_\$TIMESTAMP.sql"
 # Dump the DB
-docker exec gf-postgres pg_dump -U user ghostfolio-db > /tmp/\$FILENAME
+sudo docker exec gf-postgres pg_dump -U user ghostfolio-db > /tmp/\$FILENAME
 # Upload to S3
 aws s3 cp /tmp/\$FILENAME s3://ghostfolio-db-backup/\$FILENAME
 # Clean up
@@ -143,4 +143,4 @@ chmod +x /home/ubuntu/ghostfolio/backup_db.sh
 /home/ubuntu/ghostfolio/backup_db.sh
 
 sudo crontab -u ubuntu -l 2>/dev/null | grep -Fq "/home/ubuntu/ghostfolio/backup_db.sh" || \
-( sudo crontab -u ubuntu -l 2>/dev/null; echo "*/5 * * * * /home/ubuntu/ghostfolio/backup_db.sh" ) | sudo crontab -u ubuntu -
+( sudo crontab -u ubuntu -l 2>/dev/null; echo "0 3 * * * /home/ubuntu/ghostfolio/backup_db.sh" ) | sudo crontab -u ubuntu -
