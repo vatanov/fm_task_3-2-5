@@ -165,7 +165,7 @@ resource "aws_iam_role" "backup_role" {
 resource "aws_iam_policy" "s3_backup_policy" {
   name = "s3-backup-policy"
 
-  policy = jsondecode({
+  policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
