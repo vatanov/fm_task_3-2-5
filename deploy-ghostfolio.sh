@@ -128,14 +128,14 @@ tee /home/ubuntu/ghostfolio/backup_db.sh <<EOF
 #!/bin/bash
 
 # Filename with timestamp
-TIMESTAMP=$(date +\\%F_\\%H-\\%M)
-FILENAME="db_backup_$TIMESTAMP.sql"
+TIMESTAMP=\$(date +\%F_\%H-\%M)
+FILENAME="db_backup_\$TIMESTAMP.sql"
 # Dump the DB
-docker exec gf-postgres pg_dump -U user ghostfolio-db > /tmp/$FILENAME
+docker exec gf-postgres pg_dump -U user ghostfolio-db > /tmp/\$FILENAME
 # Upload to S3
-aws s3 cp /tmp/$FILENAME s3://ghostfolio-db-backup/$FILENAME
+aws s3 cp /tmp/\$FILENAME s3://ghostfolio-db-backup/\$FILENAME
 # Clean up
-rm /tmp/$FILENAME
+rm /tmp/\$FILENAME
 EOF
 
 chmod +x /home/ubuntu/ghostfolio/backup_db.sh
