@@ -128,4 +128,4 @@ tee /home/ubuntu/ghostfolio/test.txt <<EOF
   Hello from EC2!
 EOF
 
-cp /home/ubuntu/ghostfolio/test.txt s3://ghostfolio-db-backups/
+cp /home/ubuntu/ghostfolio/test.txt s3://ghostfolio-db-backup/
