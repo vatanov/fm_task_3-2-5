@@ -119,3 +119,13 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable compose-watcher
 sudo systemctl start compose-watcher
+
+#######################################################################################
+### Create a script to back up the database from the local host and upload it to S3 ###
+#######################################################################################
+
+tee /home/ubuntu/ghostfolio/test.txt <<EOF
+  Hello from EC2!
+EOF
+
+cp /home/ubuntu/ghostfolio/test.txt s3://ghostfolio-db-backups/

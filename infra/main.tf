@@ -114,7 +114,7 @@ resource "aws_eip_association" "ghostfolio" {
 module "ghostfolio_web_srv" {
   source               = "./modules/ec2"
   network_interface_id = aws_network_interface.ghostfolio_nic.id
-  # iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 }
 
 # 10. Create DNS Record for EC2 Instance in Route53
@@ -130,7 +130,7 @@ resource "aws_route53_record" "ghostfolio_record" {
     ignore_changes        = [records]
   }
 }
-/*
+
 ##########################################
 ### Task 3.2.6: Connecting EC2 with S3 ###
 ##########################################
@@ -193,4 +193,3 @@ resource "aws_iam_instance_profile" "ec2_profile" {
   name = "backup-profile"
   role = aws_iam_role.backup_role.name
 }
-*/
