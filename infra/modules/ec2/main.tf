@@ -12,4 +12,6 @@ resource "aws_instance" "this" {
   user_data = var.user_data
 
   tags = var.tags
+
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 }

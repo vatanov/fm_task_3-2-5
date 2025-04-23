@@ -2,7 +2,7 @@
 
 # Install necessary packages
 sudo apt-get update -y
-sudo apt-get install nginx certbot python3-certbot-nginx ca-certificates curl git -y
+sudo apt-get install nginx certbot python3-certbot-nginx ca-certificates curl git awscli -y
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
@@ -125,7 +125,7 @@ sudo systemctl start compose-watcher
 #######################################################################################
 
 tee /home/ubuntu/ghostfolio/test.txt <<EOF
-  Hello from EC2!
+Hello from EC2!
 EOF
 
-cp /home/ubuntu/ghostfolio/test.txt s3://ghostfolio-db-backup/
+aws s3 cp /home/ubuntu/ghostfolio/test.txt s3://ghostfolio-db-backup/
