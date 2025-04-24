@@ -5,69 +5,18 @@ locals {
   private_ip     = "10.0.1.50"
 }
 
-# # 1. Create vpc
-# resource "aws_vpc" "ghostfolio_vpc" {
-#   cidr_block       = "10.0.0.0/16"
-#   instance_tenancy = "default"
-
-#   tags = {
-#     Name = "ghostfolio_vpc"
-#   }
-# }
-
-# # 2. Create Internet Gateway
-# resource "aws_internet_gateway" "ghostfolio_gw" {
-#   vpc_id = aws_vpc.ghostfolio_vpc.id
-
-#   tags = {
-#     Name = "ghostfolio_gw"
-#   }
-# }
-
-# # 3. Create Custom Route Table
-# resource "aws_route_table" "ghostfolio_rt" {
-#   vpc_id = aws_vpc.ghostfolio_vpc.id
-
-#   route {
-#     cidr_block = local.allow_all_cidr
-#     gateway_id = aws_internet_gateway.ghostfolio_gw.id
-#   }
-
-#   tags = {
-#     Name = "ghostfolio_rt"
-#   }
-# }
-
-# # 4. Create a Subnet
-# resource "aws_subnet" "ghostfolio_subnet" {
-#   vpc_id            = aws_vpc.ghostfolio_vpc.id
-#   cidr_block        = "10.0.1.0/24"
-#   availability_zone = "us-east-1a"
-
-#   tags = {
-#     Name = "ghostfolio_subnet"
-#   }
-# }
-
-# # 5. Associate subnet with Route Table
-# resource "aws_route_table_association" "ghostfolio_subnet_and_rt_association" {
-#   subnet_id      = aws_subnet.ghostfolio_subnet.id
-#   route_table_id = aws_route_table.ghostfolio_rt.id
-# }
-
-# 1. Create VPC, subnet, Internet Gateway, route table and association
+# 1-5. Create VPC, subnet, Internet Gateway, route table and association
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "ghostfolio-vpc"
-  cidr = "10.0.0.0/16"
-  azs = ["us-east-1a"]
-  public_subnets = ["10.0.1.0/24"]
-  enable_dns_support = true
-  enable_dns_hostnames = true
-  create_igw = true
-  map_public_ip_on_launch = true
-  create_multiple_public_route_tables = true
+  name                                = "ghostfolio-vpc" # A name prefix used for tagging and naming resources created by the module
+  cidr                                = "10.0.0.0/16"    # The CIDR block for the VPC
+  azs                                 = ["us-east-1a"]   # List of Availability Zones to use — we use only one here for simplicity
+  public_subnets                      = ["10.0.1.0/24"]  # List of public subnet CIDR blocks — one per AZ above
+  enable_dns_support                  = true             # Enables DNS support in the VPC (required for DNS resolution)
+  enable_dns_hostnames                = true             # Enables assigning hostnames to instances launched in the VPC
+  create_igw                          = true             # Internet Gateway (IGW) is created
+  map_public_ip_on_launch             = true             # Automatically assign public IPs to instances launched in public subnets
 
   tags = {
     Name = "ghostfolio-vpc"
@@ -160,6 +109,29 @@ resource "aws_s3_bucket" "postgres_backup" {
 
   tags = {
     Name = "Postgres Backup"
+  }
+}
+
+# 11.1 Create policy for S3 bucket to transition backups to Glacier after one week and delete them after one month.
+resource "aws_s3_bucket_lifecycle_configuration" "postgres_backup_lifecycle" {
+  bucket = aws_s3_bucket.postgres_backup.id
+
+  rule {
+    id     = "transition-and-delete"
+    status = "Enabled"
+
+    filter {
+      prefix = "" # Applies to all objects
+    }
+
+    transition {
+      days          = 7
+      storage_class = "GLACIER"
+    }
+
+    expiration {
+      days = 30
+    }
   }
 }
 

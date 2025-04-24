@@ -10,7 +10,7 @@ resource "aws_instance" "this" {
   }
 
   iam_instance_profile = var.iam_instance_profile
-  
+
   user_data = var.user_data
 
   tags = var.tags
