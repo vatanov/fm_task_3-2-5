@@ -5,54 +5,73 @@ locals {
   private_ip     = "10.0.1.50"
 }
 
-# 1. Create vpc
-resource "aws_vpc" "ghostfolio_vpc" {
-  cidr_block       = "10.0.0.0/16"
-  instance_tenancy = "default"
+# # 1. Create vpc
+# resource "aws_vpc" "ghostfolio_vpc" {
+#   cidr_block       = "10.0.0.0/16"
+#   instance_tenancy = "default"
+
+#   tags = {
+#     Name = "ghostfolio_vpc"
+#   }
+# }
+
+# # 2. Create Internet Gateway
+# resource "aws_internet_gateway" "ghostfolio_gw" {
+#   vpc_id = aws_vpc.ghostfolio_vpc.id
+
+#   tags = {
+#     Name = "ghostfolio_gw"
+#   }
+# }
+
+# # 3. Create Custom Route Table
+# resource "aws_route_table" "ghostfolio_rt" {
+#   vpc_id = aws_vpc.ghostfolio_vpc.id
+
+#   route {
+#     cidr_block = local.allow_all_cidr
+#     gateway_id = aws_internet_gateway.ghostfolio_gw.id
+#   }
+
+#   tags = {
+#     Name = "ghostfolio_rt"
+#   }
+# }
+
+# # 4. Create a Subnet
+# resource "aws_subnet" "ghostfolio_subnet" {
+#   vpc_id            = aws_vpc.ghostfolio_vpc.id
+#   cidr_block        = "10.0.1.0/24"
+#   availability_zone = "us-east-1a"
+
+#   tags = {
+#     Name = "ghostfolio_subnet"
+#   }
+# }
+
+# # 5. Associate subnet with Route Table
+# resource "aws_route_table_association" "ghostfolio_subnet_and_rt_association" {
+#   subnet_id      = aws_subnet.ghostfolio_subnet.id
+#   route_table_id = aws_route_table.ghostfolio_rt.id
+# }
+
+# 1. Create VPC, subnet, Internet Gateway, route table and association
+module "vpc" {
+  source = "terraform-aws-modules/vpc/aws"
+
+  name = "ghostfolio-vpc"
+  cidr = "10.0.0.0/16"
+  azs = ["us-east-1a"]
+  public_subnets = ["10.0.1.0/24"]
+  enable_dns_support = true
+  enable_dns_hostnames = true
+  create_igw = true
+  map_public_ip_on_launch = true
+  create_multiple_public_route_tables = true
 
   tags = {
-    Name = "ghostfolio_vpc"
+    Name = "ghostfolio-vpc"
   }
-}
-
-# 2. Create Internet Gateway
-resource "aws_internet_gateway" "ghostfolio_gw" {
-  vpc_id = aws_vpc.ghostfolio_vpc.id
-
-  tags = {
-    Name = "ghostfolio_gw"
-  }
-}
-
-# 3. Create Custom Route Table
-resource "aws_route_table" "ghostfolio_rt" {
-  vpc_id = aws_vpc.ghostfolio_vpc.id
-
-  route {
-    cidr_block = local.allow_all_cidr
-    gateway_id = aws_internet_gateway.ghostfolio_gw.id
-  }
-
-  tags = {
-    Name = "ghostfolio_rt"
-  }
-}
-
-# 4. Create a Subnet
-resource "aws_subnet" "ghostfolio_subnet" {
-  vpc_id            = aws_vpc.ghostfolio_vpc.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "us-east-1a"
-
-  tags = {
-    Name = "ghostfolio_subnet"
-  }
-}
-
-# 5. Associate subnet with Route Table
-resource "aws_route_table_association" "ghostfolio_subnet_and_rt_association" {
-  subnet_id      = aws_subnet.ghostfolio_subnet.id
-  route_table_id = aws_route_table.ghostfolio_rt.id
 }
 
 # 6. Create Security Group to allow ports 22,80,443 only
