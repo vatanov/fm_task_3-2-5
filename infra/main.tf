@@ -115,9 +115,9 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic" {
   ip_protocol       = "-1" # semantically equivalent to all ports
 }
 
-# 7. Create a network interface with an ip in the subnet that was created in step 4
+# 7. Create a network interface with an ip
 resource "aws_network_interface" "ghostfolio_nic" {
-  subnet_id       = aws_subnet.ghostfolio_subnet.id
+  subnet_id       = module.vpc.public_subnets[0]
   private_ips     = [local.private_ip]
   security_groups = [aws_security_group.allow_web.id]
 }
