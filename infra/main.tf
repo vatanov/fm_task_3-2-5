@@ -56,7 +56,7 @@ locals {
 # }
 
 # 1. Create VPC, subnet, Internet Gateway, route table and association
-module "vpc" {
+module "aws_vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
   name = "ghostfolio-vpc"
