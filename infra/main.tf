@@ -56,7 +56,7 @@ locals {
 # }
 
 # 1. Create VPC, subnet, Internet Gateway, route table and association
-module "aws_vpc" {
+module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
   name = "ghostfolio-vpc"
@@ -78,7 +78,7 @@ module "aws_vpc" {
 resource "aws_security_group" "allow_web" {
   name        = "allow_web"
   description = "Allow web inbound traffic"
-  vpc_id      = aws_vpc.ghostfolio_vpc.id
+  vpc_id      = module.vpc.vpc_id
 
   tags = {
     Name = "allow_web_traffic"
