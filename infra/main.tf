@@ -126,7 +126,7 @@ resource "aws_network_interface" "ghostfolio_nic" {
 resource "aws_eip_association" "ghostfolio" {
   allocation_id        = "eipalloc-08db0f6e2886a95f5" # Replace with your existing EIP's allocation ID
   network_interface_id = aws_network_interface.ghostfolio_nic.id
-  depends_on           = [aws_internet_gateway.ghostfolio_gw, aws_network_interface.ghostfolio_nic, module.ghostfolio_web_srv]
+  depends_on           = [aws_network_interface.ghostfolio_nic, module.ghostfolio_web_srv]
 }
 
 # 9. Create Linux server, install components and run ghostfolio webapp
