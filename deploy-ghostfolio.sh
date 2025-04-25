@@ -2,7 +2,7 @@
 
 # Install necessary packages
 sudo apt-get update -y
-sudo apt-get install nginx certbot python3-certbot-nginx ca-certificates curl git -y
+sudo apt-get install nginx certbot python3-certbot-nginx ca-certificates curl git awscli -y
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
@@ -119,3 +119,28 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable compose-watcher
 sudo systemctl start compose-watcher
+
+#######################################################################################
+### Create a script to back up the database from the local host and upload it to S3 ###
+#######################################################################################
+
+tee /home/ubuntu/ghostfolio/backup_db.sh <<EOF
+#!/bin/bash
+
+# Filename with timestamp
+TIMESTAMP=\$(date +\%F_\%H-\%M)
+FILENAME="db_backup_\$TIMESTAMP.sql"
+# Dump the DB
+sudo docker exec gf-postgres pg_dump -U user ghostfolio-db > /tmp/\$FILENAME
+# Upload to S3
+aws s3 cp /tmp/\$FILENAME s3://ghostfolio-db-backup/\$FILENAME
+# Clean up
+rm /tmp/\$FILENAME
+EOF
+
+chmod +x /home/ubuntu/ghostfolio/backup_db.sh
+
+/home/ubuntu/ghostfolio/backup_db.sh
+
+sudo crontab -u ubuntu -l 2>/dev/null | grep -Fq "/home/ubuntu/ghostfolio/backup_db.sh" || \
+( sudo crontab -u ubuntu -l 2>/dev/null; echo "0 3 * * * /home/ubuntu/ghostfolio/backup_db.sh" ) | sudo crontab -u ubuntu -

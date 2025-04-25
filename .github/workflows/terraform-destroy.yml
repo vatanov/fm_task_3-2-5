@@ -1,12 +1,12 @@
 name: Terraform Destroy Infrastructure
 
 on:
-  workflow_dispatch:  # Allows manual trigger from GitHub UI
+  workflow_dispatch:  # Manual trigger from GitHub UI
 
 env:
   AWS_REGION: us-east-1
   TF_VAR_hosted_zone_id: ${{ secrets.TF_VAR_HOSTED_ZONE_ID }}
-  TF_VAR_public_key: ${{ secrets.TF_VAR_public_key }}
+  TF_VAR_ec2_public_ip: ${{ secrets.EC2_PUBLIC_IP }}
 
 jobs:
   destroy:
@@ -18,8 +18,11 @@ jobs:
         working-directory: ./infra
 
     steps:
-      - name: Checkout code
+      - name: Checkout tf-state branch
         uses: actions/checkout@v3
+        with:
+          ref: tf-state
+          token: ${{ secrets.GH_PAT }}  # Required to fetch state branch
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -31,8 +34,17 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Copy tfstate file into Terraform expected path
+        run: cp infra/terraform.tfstate terraform.tfstate
+
       - name: Terraform Init
         run: terraform init
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
+
+      - name: Delete tf-state branch (optional cleanup)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git push -f https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }} :refs/heads/tf-state
