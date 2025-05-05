@@ -189,3 +189,50 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 ### Task 3.2.7: Getting cache out of EC2 ###
 ############################################
 
+# 1. ElastiCache Subnet Group
+resource "aws_elasticache_subnet_group" "ghostfolio_redis_subnet_group" {
+  name       = "ghostfolio-redis-subnet-group"
+  subnet_ids = module.vpc.public_subnets
+}
+
+# 2. Redis Security Group
+resource "aws_security_group" "redis_sg" {
+  name        = "ghostfolio-redis-sg"
+  description = "Allow Redis traffic from Ghostfolio EC2"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.allow_web.id] # allow from EC2 SG
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "ghostfolio-redis-sg"
+  }
+}
+
+# 3. ElastiCache Redis Cluster
+resource "aws_elasticache_cluster" "ghostfolio_redis" {
+  cluster_id           = "ghostfolio-redis"
+  engine               = "redis"
+  node_type            = "cache.t4g.micro" # free-tier
+  num_cache_nodes      = 1
+  port                 = 6379
+  parameter_group_name = "default.redis7"
+  subnet_group_name    = aws_elasticache_subnet_group.ghostfolio_redis_subnet_group.name
+  security_group_ids   = [aws_security_group.redis_sg.id]
+
+  tags = {
+    Name = "Ghostfolio Redis"
+  }
+}
+
