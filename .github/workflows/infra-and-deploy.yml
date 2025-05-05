@@ -7,6 +7,7 @@ on:
       - develop
       - add-infara-and-deploy
       - task_3-2-6_implementation
+      - task_3-2-7_implementation
 
 env:
   AWS_REGION: us-east-1
