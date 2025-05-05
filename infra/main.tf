@@ -184,3 +184,8 @@ resource "aws_iam_instance_profile" "ec2_profile" {
   name = "backup-profile"
   role = aws_iam_role.backup_role.name
 }
+
+############################################
+### Task 3.2.7: Getting cache out of EC2 ###
+############################################
+
