@@ -45,6 +45,14 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
+      - name: Get Redis Host from Terraform Output
+        id: redis
+        run: |
+          REDIS_HOST=$(terraform output -raw redis_host)
+          # DEBUG
+          echo $REDIS_HOST
+          echo "REDIS_HOST=$REDIS_HOST" >> $GITHUB_ENV
+
       - name: Commit state to branch (not recommended for prod!)
         run: |
           git config user.name "github-actions"
