@@ -48,10 +48,14 @@ jobs:
       - name: Set REDIS_HOST from Terraform output
         shell: bash
         run: |
-          RAW_OUTPUT=$(terraform output -json | jq -r '.redis_endpoint.value')
+          RAW_OUTPUT=$(terraform output redis_endpoint 2>/dev/null | grep -Eo '([a-zA-Z0-9-]+\.)+cache\.amazonaws\.com' | head -n 1)
           echo "Parsed REDIS_HOST=$RAW_OUTPUT"
-          printf "REDIS_HOST=%s\n" "$RAW_OUTPUT" >> "$GITHUB_ENV"
-
+          if [[ -z "$RAW_OUTPUT" ]]; then
+            echo "Failed to parse REDIS_HOST from terraform output" >&2
+            exit 1
+          fi
+          echo "REDIS_HOST=$RAW_OUTPUT" >> "$GITHUB_ENV"
+          
       - name: Commit state to branch (not recommended for prod!)
         if: always()
         run: |
