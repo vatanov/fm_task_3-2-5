@@ -93,6 +93,8 @@ jobs:
 
       - name: Upload and run deployment script
         run: |
+          # DEBUG:
+          echo "Value of REDIS_HOST is: $REDIS_HOST"
           scp -i id_rsa -o StrictHostKeyChecking=no deploy-ghostfolio.sh ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
           ssh -i id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} 'bash /home/ubuntu/deploy-ghostfolio.sh'
         env:
