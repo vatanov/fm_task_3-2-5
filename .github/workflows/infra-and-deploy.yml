@@ -18,6 +18,8 @@ jobs:
   terraform:
     name: Provision EC2 with Terraform
     runs-on: ubuntu-latest
+    outputs:
+      redis-host: ${{ steps.set-host.outputs.redis-host }}
 
     defaults:
       run:
@@ -45,7 +47,8 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
-      - name: Set REDIS_HOST from Terraform output
+      - name: Set redis-host from Terraform output
+        id: set-host
         shell: bash
         run: |
           RAW_OUTPUT=$(terraform output redis_endpoint 2>/dev/null | grep -Eo '([a-zA-Z0-9-]+\.)+cache\.amazonaws\.com' | head -n 1)
@@ -54,7 +57,7 @@ jobs:
             echo "Failed to parse REDIS_HOST from terraform output" >&2
             exit 1
           fi
-          echo "REDIS_HOST=$RAW_OUTPUT" >> "$GITHUB_ENV"
+          echo "redis-host=$RAW_OUTPUT" >> "$GITHUB_ENV"
           
       - name: Commit state to branch (not recommended for prod!)
         if: always()
@@ -72,6 +75,8 @@ jobs:
     name: Deploy Ghostfolio to EC2
     runs-on: ubuntu-latest
     needs: terraform
+    env:
+      REDIS_HOST: ${{ needs.terraform.outputs.redis-host }}
 
     steps:
       - name: Checkout code
@@ -97,5 +102,3 @@ jobs:
           echo "Value of REDIS_HOST is: $REDIS_HOST"
           scp -i id_rsa -o StrictHostKeyChecking=no deploy-ghostfolio.sh ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
           ssh -i id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} 'bash /home/ubuntu/deploy-ghostfolio.sh'
-        env:
-          REDIS_HOST: ${{ env.REDIS_HOST }}
