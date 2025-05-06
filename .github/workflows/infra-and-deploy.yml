@@ -95,3 +95,5 @@ jobs:
         run: |
           scp -i id_rsa -o StrictHostKeyChecking=no deploy-ghostfolio.sh ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
           ssh -i id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} 'bash /home/ubuntu/deploy-ghostfolio.sh'
+        env:
+          REDIS_HOST: ${{ env.REDIS_HOST }}
