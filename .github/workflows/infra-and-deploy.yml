@@ -48,7 +48,7 @@ jobs:
       - name: Set REDIS_HOST from Terraform output
         shell: bash
         run: |
-          RAW_OUTPUT=$(terraform output -raw redis_endpoint 2>/dev/null || terraform output redis_endpoint | tr -d '"')
+          RAW_OUTPUT=$(terraform output -json | jq -r '.redis_endpoint.value')
           echo "Parsed REDIS_HOST=$RAW_OUTPUT"
           printf "REDIS_HOST=%s\n" "$RAW_OUTPUT" >> "$GITHUB_ENV"
 
