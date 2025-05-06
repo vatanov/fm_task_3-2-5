@@ -49,7 +49,7 @@ jobs:
         run: |
           RAW_OUTPUT=$(terraform output redis_endpoint | grep -Eo '([a-zA-Z0-9-]+\.)+cache\.amazonaws\.com')
           echo "Parsed REDIS_HOST=$RAW_OUTPUT"
-          echo "REDIS_HOST=$RAW_OUTPUT" >> $GITHUB_ENV
+          echo "REDIS_HOST=$RAW_OUTPUT" >> "$GITHUB_ENV"
 
       - name: Commit state to branch (not recommended for prod!)
         if: always()
