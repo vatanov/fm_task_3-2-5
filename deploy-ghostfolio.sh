@@ -56,11 +56,13 @@ git clone https://github.com/ghostfolio/ghostfolio.git
 cd ghostfolio/
 touch .env
 
+RED_HOST=$REDIS_HOST
+
 tee .env <<EOF
 COMPOSE_PROJECT_NAME=ghostfolio
 # CACHE"
 #REDIS_HOST=gf-redis
-REDIS_HOST=$REDIS_HOST
+REDIS_HOST=\${RED_HOST}
 REDIS_PORT=6379
 #REDIS_PASSWORD=Secret1234
 # POSTGRES
