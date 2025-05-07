@@ -63,6 +63,7 @@ COMPOSE_PROJECT_NAME=ghostfolio
 REDIS_HOST=ghostfolio-redis.gdzzpx.0001.use1.cache.amazonaws.com
 REDIS_PORT=6379
 #REDIS_PASSWORD=Secret1234
+REDIS_PASSWORD=null
 # POSTGRES
 POSTGRES_DB=ghostfolio-db
 POSTGRES_USER=user
