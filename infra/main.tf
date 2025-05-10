@@ -9,14 +9,14 @@ locals {
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name                                = "ghostfolio-vpc" # A name prefix used for tagging and naming resources created by the module
-  cidr                                = "10.0.0.0/16"    # The CIDR block for the VPC
-  azs                                 = ["us-east-1a"]   # List of Availability Zones to use — we use only one here for simplicity
-  public_subnets                      = ["10.0.1.0/24"]  # List of public subnet CIDR blocks — one per AZ above
-  enable_dns_support                  = true             # Enables DNS support in the VPC (required for DNS resolution)
-  enable_dns_hostnames                = true             # Enables assigning hostnames to instances launched in the VPC
-  create_igw                          = true             # Internet Gateway (IGW) is created
-  map_public_ip_on_launch             = true             # Automatically assign public IPs to instances launched in public subnets
+  name                    = "ghostfolio-vpc" # A name prefix used for tagging and naming resources created by the module
+  cidr                    = "10.0.0.0/16"    # The CIDR block for the VPC
+  azs                     = ["us-east-1a"]   # List of Availability Zones to use — we use only one here for simplicity
+  public_subnets          = ["10.0.1.0/24"]  # List of public subnet CIDR blocks — one per AZ above
+  enable_dns_support      = true             # Enables DNS support in the VPC (required for DNS resolution)
+  enable_dns_hostnames    = true             # Enables assigning hostnames to instances launched in the VPC
+  create_igw              = true             # Internet Gateway (IGW) is created
+  map_public_ip_on_launch = true             # Automatically assign public IPs to instances launched in public subnets
 
   tags = {
     Name = "ghostfolio-vpc"
@@ -220,7 +220,22 @@ resource "aws_security_group" "redis_sg" {
   }
 }
 
-# 3. ElastiCache Redis Cluster
+# 3. Create an ElastiCache Parameter Group
+resource "aws_elasticache_parameter_group" "ghostfolio_redis_params" {
+  name   = "ghostfolio-redis-params-"
+  family = "redis7" # Ensure this matches your desired Redis engine version
+
+  parameter {
+    name  = "requirepass"
+    value = "" # Replace with your desired password, or "" for no password
+  }
+
+  tags = {
+    Name = "Ghostfolio Redis Parameters"
+  }
+}
+
+# 4. ElastiCache Redis Cluster
 resource "aws_elasticache_cluster" "ghostfolio_redis" {
   cluster_id           = "ghostfolio-redis"
   engine               = "redis"
@@ -235,4 +250,3 @@ resource "aws_elasticache_cluster" "ghostfolio_redis" {
     Name = "Ghostfolio Redis"
   }
 }
-

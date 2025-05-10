@@ -58,7 +58,7 @@ touch .env
 
 tee .env <<EOF
 COMPOSE_PROJECT_NAME=ghostfolio
-# CACHE"
+# CACHE
 #REDIS_HOST=gf-redis
 REDIS_HOST=ghostfolio-redis.gdzzpx.0001.use1.cache.amazonaws.com
 REDIS_PORT=6379
