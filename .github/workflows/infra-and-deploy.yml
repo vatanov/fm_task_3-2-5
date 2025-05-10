@@ -46,19 +46,7 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-
-      - name: Set redis-host from Terraform output
-        id: set-host
-        shell: bash
-        run: |
-          RAW_OUTPUT=$(terraform output redis_endpoint 2>/dev/null | grep -Eo '([a-zA-Z0-9-]+\.)+cache\.amazonaws\.com' | head -n 1)
-          echo "Parsed REDIS_HOST=$RAW_OUTPUT"
-          if [[ -z "$RAW_OUTPUT" ]]; then
-            echo "Failed to parse REDIS_HOST from terraform output" >&2
-            exit 1
-          fi
-          echo "redis-host=$RAW_OUTPUT" >> "$GITHUB_OUTPUT"
-          
+    
       - name: Commit state to branch (not recommended for prod!)
         if: always()
         run: |
