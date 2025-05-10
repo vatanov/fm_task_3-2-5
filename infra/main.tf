@@ -244,6 +244,9 @@ resource "aws_elasticache_replication_group" "ghostfolio_redis" {
   security_group_ids         = [aws_security_group.redis_sg.id]
   automatic_failover_enabled = false
   auth_token                 = "MySecureRedisPassword_1234567890"
+  transit_encryption_enabled = true
+  at_rest_encryption_enabled = true
+  auto_minor_version_upgrade = true
 
   tags = {
     Name = "Ghostfolio Redis"
