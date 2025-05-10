@@ -224,11 +224,6 @@ resource "aws_security_group" "redis_sg" {
 resource "aws_elasticache_parameter_group" "ghostfolio_redis_params" {
   name   = "ghostfolio-redis-params"
   family = "redis7" # Ensure this matches your desired Redis engine version
-  
-  parameter {
-    name  = "requirepass"
-    value = "Secret1234" # Replace with password
-  }
 
   tags = {
     Name = "Ghostfolio Redis Parameters"
@@ -236,15 +231,19 @@ resource "aws_elasticache_parameter_group" "ghostfolio_redis_params" {
 }
 
 # 4. ElastiCache Redis Cluster
-resource "aws_elasticache_cluster" "ghostfolio_redis" {
-  cluster_id           = "ghostfolio-redis"
-  engine               = "redis"
-  node_type            = "cache.t4g.micro" # free-tier
-  num_cache_nodes      = 1
-  port                 = 6379
-  parameter_group_name = aws_elasticache_parameter_group.ghostfolio_redis_params.name # Use the custom parameter group
-  subnet_group_name    = aws_elasticache_subnet_group.ghostfolio_redis_subnet_group.name
-  security_group_ids   = [aws_security_group.redis_sg.id]
+resource "aws_elasticache_replication_group" "ghostfolio_redis" {
+  replication_group_id       = "ghostfolio-redis"
+  description                = "Redis for Ghostfolio"
+  engine                     = "redis"
+  engine_version             = "7.0"
+  node_type                  = "cache.t4g.micro"
+  num_cache_clusters         = 1
+  port                       = 6379
+  parameter_group_name       = aws_elasticache_parameter_group.ghostfolio_redis_params.name
+  subnet_group_name          = aws_elasticache_subnet_group.ghostfolio_redis_subnet_group.name
+  security_group_ids         = [aws_security_group.redis_sg.id]
+  automatic_failover_enabled = false
+  auth_token                 = "Secret1234"
 
   tags = {
     Name = "Ghostfolio Redis"
