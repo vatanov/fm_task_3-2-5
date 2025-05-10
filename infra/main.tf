@@ -225,11 +225,6 @@ resource "aws_elasticache_parameter_group" "ghostfolio_redis_params" {
   name   = "ghostfolio-redis-params"
   family = "redis7" # Ensure this matches your desired Redis engine version
 
-  parameter {
-    name  = "requirepass"
-    value = "" # Replace with your desired password, or "" for no password
-  }
-
   tags = {
     Name = "Ghostfolio Redis Parameters"
   }
@@ -242,7 +237,7 @@ resource "aws_elasticache_cluster" "ghostfolio_redis" {
   node_type            = "cache.t4g.micro" # free-tier
   num_cache_nodes      = 1
   port                 = 6379
-  parameter_group_name = "default.redis7"
+  parameter_group_name = aws_elasticache_parameter_group.ghostfolio_redis_params.name # Use the custom parameter group
   subnet_group_name    = aws_elasticache_subnet_group.ghostfolio_redis_subnet_group.name
   security_group_ids   = [aws_security_group.redis_sg.id]
 
