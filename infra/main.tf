@@ -224,6 +224,11 @@ resource "aws_security_group" "redis_sg" {
 resource "aws_elasticache_parameter_group" "ghostfolio_redis_params" {
   name   = "ghostfolio-redis-params"
   family = "redis7" # Ensure this matches your desired Redis engine version
+  
+  parameter {
+    name  = "requirepass"
+    value = "Secret1234" # Replace with password
+  }
 
   tags = {
     Name = "Ghostfolio Redis Parameters"
