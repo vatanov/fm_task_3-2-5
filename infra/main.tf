@@ -243,7 +243,7 @@ resource "aws_elasticache_replication_group" "ghostfolio_redis" {
   subnet_group_name          = aws_elasticache_subnet_group.ghostfolio_redis_subnet_group.name
   security_group_ids         = [aws_security_group.redis_sg.id]
   automatic_failover_enabled = false
-  auth_token                 = "Secret1234"
+  auth_token                 = "MySecureRedisPassword_1234567890"
 
   tags = {
     Name = "Ghostfolio Redis"
