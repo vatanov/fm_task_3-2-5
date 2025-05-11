@@ -56,7 +56,8 @@ git clone https://github.com/ghostfolio/ghostfolio.git
 cd ghostfolio/ || exit
 
 #### DEBUG ####
-cat docker-compose.yml
+echo "DEBUG: docker-compose.yml content:"
+cat docker/docker-compose.yml
 git branch
 ###############
 
