@@ -83,6 +83,7 @@ module "ghostfolio_web_srv" {
   source               = "./modules/ec2"
   network_interface_id = aws_network_interface.ghostfolio_nic.id
   iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+  user_data            = file("${path.module}/../deploy-ghostfolio.sh")
 }
 
 # 10. Create DNS Record for EC2 Instance in Route53

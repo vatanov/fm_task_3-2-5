@@ -53,7 +53,13 @@ EOF
 # Download, configure and run containers with Ghostfolio app, DB and Redis
 git clone https://github.com/ghostfolio/ghostfolio.git
 
-cd ghostfolio/
+cd ghostfolio/ || exit
+
+#### DEBUG ####
+cat docker-compose.yml
+git branch
+###############
+
 touch .env
 
 tee .env <<EOF
