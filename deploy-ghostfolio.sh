@@ -60,7 +60,7 @@ tee .env <<EOF
 COMPOSE_PROJECT_NAME=ghostfolio
 # CACHE
 #REDIS_HOST=gf-redis
-REDIS_HOST=rediss://master.ghostfolio-redis.gdzzpx.use1.cache.amazonaws.com
+REDIS_HOST=tls://master.ghostfolio-redis.gdzzpx.use1.cache.amazonaws.com
 REDIS_PORT=6379
 REDIS_PASSWORD=MySecureRedisPassword_1234567890
 # POSTGRES
