@@ -52,9 +52,8 @@ EOF
 
 # Download, configure and run containers with Ghostfolio app, DB and Redis
 git clone https://github.com/vatanov/fm_task_3-2-5.git
-git checkout -b task_3-2-7_implementation origin/task_3-2-7_implementation
-
 cd /fm_task_3-2-5/ || exit
+git checkout -b task_3-2-7_implementation origin/task_3-2-7_implementation
 
 #### DEBUG ####
 echo "DEBUG: docker-compose.yml content:"
