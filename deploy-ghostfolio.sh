@@ -51,8 +51,8 @@ server {
 EOF
 
 # Download, configure and run containers with Ghostfolio app, DB and Redis
-git clone https://github.com/ghostfolio/ghostfolio.git
-git checkout task_3-2-7_implementation
+git clone https://github.com/vatanov/fm_task_3-2-5.git
+# git checkout -b feature-branch origin/feature-branch
 
 cd ghostfolio/ || exit
 
