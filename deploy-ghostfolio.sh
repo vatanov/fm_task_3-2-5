@@ -52,9 +52,9 @@ EOF
 
 # Download, configure and run containers with Ghostfolio app, DB and Redis
 git clone https://github.com/vatanov/fm_task_3-2-5.git
-# git checkout -b feature-branch origin/feature-branch
+git checkout -b task_3-2-7_implementation origin/task_3-2-7_implementation
 
-cd ghostfolio/ || exit
+cd /fm_task_3-2-5/ || exit
 
 #### DEBUG ####
 echo "DEBUG: docker-compose.yml content:"
@@ -97,9 +97,9 @@ sudo nginx -t && sudo systemctl reload nginx
 sudo apt-get install inotify-tools -y
 
 # Create watcher script
-tee /home/ubuntu/ghostfolio/watch-compose.sh <<EOF
+tee /fm_task_3-2-5/watch-compose.sh <<EOF
 #!/bin/bash
-COMPOSE_FILE="/home/ubuntu/ghostfolio/docker/docker-compose.yml"
+COMPOSE_FILE="/fm_task_3-2-5/docker/docker-compose.yml"
 echo "Watching $COMPOSE_FILE for changes..."
 while inotifywait -e modify "$COMPOSE_FILE"; do
   echo "Change detected, restarting containers..."
@@ -107,7 +107,7 @@ while inotifywait -e modify "$COMPOSE_FILE"; do
 done
 EOF
 
-chmod +x /home/ubuntu/ghostfolio/watch-compose.sh
+chmod +x /fm_task_3-2-5/watch-compose.sh
 
 # Create systemd service
 sudo tee /etc/systemd/system/compose-watcher.service > /dev/null <<EOF
@@ -116,8 +116,8 @@ Description=Watch docker-compose.yml and reload containers on change
 After=network.target docker.service
 
 [Service]
-ExecStart=/home/ubuntu/ghostfolio/watch-compose.sh
-WorkingDirectory=/home/ubuntu/ghostfolio
+ExecStart=/fm_task_3-2-5/watch-compose.sh
+WorkingDirectory=/fm_task_3-2-5
 User=ubuntu
 Restart=always
 
@@ -133,7 +133,7 @@ sudo systemctl start compose-watcher
 ### Create a script to back up the database from the local host and upload it to S3 ###
 #######################################################################################
 
-tee /home/ubuntu/ghostfolio/backup_db.sh <<EOF
+tee /fm_task_3-2-5/backup_db.sh <<EOF
 #!/bin/bash
 
 # Filename with timestamp
@@ -147,9 +147,9 @@ aws s3 cp /tmp/\$FILENAME s3://ghostfolio-db-backup/\$FILENAME
 rm /tmp/\$FILENAME
 EOF
 
-chmod +x /home/ubuntu/ghostfolio/backup_db.sh
+chmod +x /fm_task_3-2-5/backup_db.sh
 
-/home/ubuntu/ghostfolio/backup_db.sh
+/fm_task_3-2-5/backup_db.sh
 
-sudo crontab -u ubuntu -l 2>/dev/null | grep -Fq "/home/ubuntu/ghostfolio/backup_db.sh" || \
-( sudo crontab -u ubuntu -l 2>/dev/null; echo "0 3 * * * /home/ubuntu/ghostfolio/backup_db.sh" ) | sudo crontab -u ubuntu -
+sudo crontab -u ubuntu -l 2>/dev/null | grep -Fq "/fm_task_3-2-5/backup_db.sh" || \
+( sudo crontab -u ubuntu -l 2>/dev/null; echo "0 3 * * * /fm_task_3-2-5/backup_db.sh" ) | sudo crontab -u ubuntu -
